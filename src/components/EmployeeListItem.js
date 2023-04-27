@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { MdOutlineExpandMore, MdExpandLess } from "react-icons/md";
+
 
 const Avatar = styled.img`
   border-radius: 50%;
@@ -54,7 +56,10 @@ const EmployeeListItem = ({ employee, employeesById }) => {
 
   return (
     <>
-      <EmployeeListItemWrapper onClick={toggleOpen}>
+      <EmployeeListItemWrapper >
+        <div onClick={toggleOpen}>
+          {isOpen ? <MdExpandLess /> : <MdOutlineExpandMore/>}
+        </div>
         <Avatar src={employee.profile_pic} />
         <Details>
           <FullName>{`${employee.first_name} ${employee.last_name}`}</FullName>
