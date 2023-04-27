@@ -5,20 +5,23 @@ import { MdFace } from "react-icons/md";
 
 import { platformColors } from './constants/colors'
 import EmployeeListItem from "./components/EmployeeListItem";
+import {createManagersDirectory} from "./utils/createManagersDirectory";
 
 const MyLogo = styled.div`
   color: ${platformColors.lightPink}
 `;
 function App() {
     const [employees, setEmployees] = useState([]);
+    const [employeesById, setEmployeesById] = useState({});
     useEffect(() => {
       const data = fetchEmployees()
       setEmployees(data)
+      const byId = createManagersDirectory(data)
+      setEmployeesById(byId)
     }, []);
 
   return (
     <div>
-    {/*<UsersContext.Provider value={users}>*/}
       <MyLogo>
         <MdFace color={platformColors.lightPink}/>
         oritkozolin 2023
@@ -27,11 +30,9 @@ function App() {
 
       {employees.map((employee)=>(
         <div>
-          <EmployeeListItem employee={employee} count={5}/>
-          {/*{employee?.first_name}*/}
+          <EmployeeListItem employee={employee} employeesById={employeesById}/>
         </div>
       ))}
-    {/*</UsersContext.Provider>*/}
   </div>
   );
 }

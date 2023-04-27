@@ -1,58 +1,73 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
-const ListItemContainer = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  border-bottom: 1px solid #ccc;
-`;
-
-const AvatarContainer = styled.div`
-  margin-right: 10px;
-`;
-
 const Avatar = styled.img`
-  width: 40px;
-  height: 40px;
   border-radius: 50%;
+  width: 48px;
+  height: 48px;
 `;
 
-const DetailsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
+const Details = styled.div`
+  margin-left: 12px;
 `;
 
-const FullName = styled.span`
+const FullName = styled.div`
   font-weight: bold;
 `;
 
-const Email = styled.span`
-  color: #666;
-  margin-top: 5px;
+const Email = styled.div`
+  font-size: 0.8em;
 `;
 
-const Count = styled.span`
-  background-color: #ccc;
-  color: #fff;
-  font-size: 12px;
-  border-radius: 10px;
-  padding: 2px 6px;
-  margin-left: 10px;
+const Count = styled.div`
+  margin-left: 24px;
+  font-size: 0.8em;
+  color: #888;
 `;
 
-const EmployeeListItem = ({ employee, count }) => {
+const EmployeeListItemWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+`;
+const NestedEmployeeList = styled.div`
+  margin-left: 30px;
+`;
+const EmployeeListItem = ({ employee, employeesById }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleOpen = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const renderNestedEmployees = () => {
+    if (employee.managed_employees && employee.managed_employees.length > 0) {
+      return employee.managed_employees.map((id) => {
+        const nestedEmployee = employeesById[id];
+        return <EmployeeListItem key={nestedEmployee.id} employee={nestedEmployee} employeesById={employeesById} />;
+      });
+    }
+    return null;
+  };
+
   return (
-    <ListItemContainer>
-      <AvatarContainer>
-        <Avatar src={employee.profile_pic} alt="Avatar" />
-      </AvatarContainer>
-      <DetailsContainer>
-        <FullName>{employee.first_name} {employee.last_name}</FullName>
-        <Email>{employee.email}</Email>
-      </DetailsContainer>
-      {count && <Count>{count}</Count>}
-    </ListItemContainer>
+    <>
+      <EmployeeListItemWrapper onClick={toggleOpen}>
+        <Avatar src={employee.profile_pic} />
+        <Details>
+          <FullName>{`${employee.first_name} ${employee.last_name}`}</FullName>
+          <Email>{employee.email}</Email>
+        </Details>
+        {employee.managed_employees && <Count>{employee.managed_employees.length} employees</Count>}
+      </EmployeeListItemWrapper>
+      {isOpen &&
+        <NestedEmployeeList>
+          {renderNestedEmployees()}
+        </NestedEmployeeList>
+      }
+    </>
   );
 };
 
